@@ -1,3 +1,4 @@
+// src/main/java/com/example/mirror/controller/ImagesController.java
 package com.example.mirror.controller;
 
 import com.example.mirror.entity.Images;
@@ -13,21 +14,22 @@ import java.util.List;
 @CrossOrigin
 @RestController
 public class ImagesController {
+
     @Autowired
     private ImagesMapper imagesMapper;
 
-    @GetMapping("/images")
+    @GetMapping("/api/images/image")
     public List<Images> findAllImages(){
         return imagesMapper.selectAllImages();
     }
 
-    @PutMapping("/images")
+    @PutMapping("/api/images/image")
     public String update(Images images){
         int i = imagesMapper.updateById(images);
         System.out.println(i);
         if(i > 0){
             return "更新成功";
-        }else {
+        } else {
             return "更新失败";
         }
     }
