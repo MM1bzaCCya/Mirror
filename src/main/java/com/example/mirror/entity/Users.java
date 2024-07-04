@@ -1,3 +1,4 @@
+// src/main/java/com/example/mirror/entity/Users.java
 package com.example.mirror.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -13,6 +14,7 @@ public class Users {
     private String email;
     private LocalDateTime created;
 
+    // Getter和Setter方法
     public Integer getId() {
         return id;
     }

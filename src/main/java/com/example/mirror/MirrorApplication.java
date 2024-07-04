@@ -1,3 +1,4 @@
+// src/main/java/com/example/mirror/MirrorApplication.java
 package com.example.mirror;
 
 import org.springframework.boot.SpringApplication;
@@ -9,5 +10,4 @@ public class MirrorApplication {
     public static void main(String[] args) {
         SpringApplication.run(MirrorApplication.class, args);
     }
-
 }

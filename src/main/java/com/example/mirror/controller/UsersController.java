@@ -7,22 +7,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin
 @RestController
-
 @RequestMapping("/api/users")
 public class UsersController {
 
     @Autowired
-    private UsersService usersService;  // 注入UsersService
+    private UsersService usersService;
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody Users user) {
-        boolean success = usersService.register(user);  // 调用注册服务
+        boolean success = usersService.register(user);
         if (success) {
-            return ResponseEntity.ok("注册成功");  // 注册成功返回200状态和成功消息
+            return ResponseEntity.ok("注册成功");
         } else {
-            return ResponseEntity.status(500).body("注册失败");  // 注册失败返回500状态和失败消息
+            return ResponseEntity.status(500).body("注册失败");
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody Users user) {
+        Users loggedInUser = usersService.login(user.getUsername(), user.getPassword());
+        if (loggedInUser != null) {
+            return ResponseEntity.ok("登录成功");
+        } else {
+            return ResponseEntity.status(401).body("登录失败，用户名或密码错误");
         }
     }
 }
