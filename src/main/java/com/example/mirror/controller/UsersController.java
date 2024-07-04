@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpSession;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/api/users")
 public class UsersController {
@@ -18,6 +19,7 @@ public class UsersController {
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody Users user) {
         try {
+            System.out.println(user);
             if (usersService.register(user)) {
                 return ResponseEntity.ok("注册成功");
             } else {

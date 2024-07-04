@@ -24,11 +24,11 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable) // 关闭CSRF保护
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/users/register", "/api/users/login", "/api/images/image").permitAll() // 允许所有人访问注册、登录和查询图片端点
-                        .anyRequest().authenticated() // 其他请求需要认证
+                        .requestMatchers("/api/users/**", "/api/images","/images/**").permitAll() // 允许所有人访问注册、登录和查询图片端点
+                        .anyRequest().permitAll()// 其他请求需要认证
                 )
-                .formLogin(formLogin -> formLogin // 使用lambda表达式配置formLogin
-                        .loginPage("/api/users/login") // 指定自定义登录页面
+                .formLogin(formLogin -> formLogin // 使用lambda表达式配置formLogin/
+                       .loginPage("/api/users/login") // 指定自定义登录页面
                         .permitAll() // 允许所有人访问登录页面
                 );
 

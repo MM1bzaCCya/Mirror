@@ -18,12 +18,12 @@ public class ImagesController {
     @Autowired
     private ImagesMapper imagesMapper;
 
-    @GetMapping("/api/images/image")
+    @GetMapping("/api/images")
     public List<Images> findAllImages(){
         return imagesMapper.selectAllImages();
     }
 
-    @PutMapping("/api/images/image")
+    @PutMapping("/api/images")
     public String update(Images images){
         int i = imagesMapper.updateById(images);
         System.out.println(i);
