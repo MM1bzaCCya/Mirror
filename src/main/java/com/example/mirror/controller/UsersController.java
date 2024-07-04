@@ -1,4 +1,3 @@
-// src/main/java/com/example/mirror/controller/UsersController.java
 package com.example.mirror.controller;
 
 import com.example.mirror.entity.Users;
@@ -16,11 +15,15 @@ public class UsersController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody Users user) {
-        boolean success = usersService.register(user);
-        if (success) {
-            return ResponseEntity.ok("注册成功");
-        } else {
-            return ResponseEntity.status(500).body("注册失败");
+        try {
+            boolean success = usersService.register(user);
+            if (success) {
+                return ResponseEntity.ok("注册成功");
+            } else {
+                return ResponseEntity.status(500).body("注册失败");
+            }
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
         }
     }
 
@@ -32,5 +35,17 @@ public class UsersController {
         } else {
             return ResponseEntity.status(401).body("登录失败，用户名或密码错误");
         }
+    }
+
+    @GetMapping("/check-username")
+    public ResponseEntity<Boolean> checkUsername(@RequestParam String username) {
+        boolean isTaken = usersService.isUsernameTaken(username);
+        return ResponseEntity.ok(isTaken);
+    }
+
+    @GetMapping("/check-email")
+    public ResponseEntity<Boolean> checkEmail(@RequestParam String email) {
+        boolean isTaken = usersService.isEmailTaken(email);
+        return ResponseEntity.ok(isTaken);
     }
 }

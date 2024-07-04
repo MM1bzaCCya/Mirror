@@ -10,4 +10,7 @@ import org.apache.ibatis.annotations.Select;
 public interface UsersMapper extends BaseMapper<Users> {
     @Select("SELECT * FROM users WHERE username = #{username} LIMIT 1")
     Users findByUsername(String username);
+
+    @Select("SELECT * FROM users WHERE email = #{email} LIMIT 1")
+    Users findByEmail(String email);
 }

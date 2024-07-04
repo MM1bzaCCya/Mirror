@@ -1,5 +1,4 @@
-// src/main/java/com/example/mirror/service/impl/UsersServiceImpl.java
-package com.example.mirror.service.impl;
+package com.example.mirror.service.Impl;
 
 import com.example.mirror.entity.Users;
 import com.example.mirror.mapper.UsersMapper;
