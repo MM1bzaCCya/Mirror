@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpSession;
-
+@CrossOrigin
 @RestController
 @RequestMapping("/api/users")
 public class UsersController {
@@ -27,10 +27,9 @@ public class UsersController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody Users user, HttpSession session) {
+    public ResponseEntity<String> login(@RequestBody Users user) {
         Users loggedInUser = usersService.login(user.getUsername(), user.getPassword());
         if (loggedInUser != null) {
-            session.setAttribute("user", loggedInUser); // 在session中设置用户信息
             return ResponseEntity.ok("登录成功");
         } else {
             return ResponseEntity.status(401).body("登录失败，用户名或密码错误");
@@ -39,11 +38,17 @@ public class UsersController {
 
     @GetMapping("/status")
     public ResponseEntity<String> getStatus(HttpSession session) {
-        Users user = (Users) session.getAttribute("user");
+        Object user = session.getAttribute("SPRING_SECURITY_CONTEXT");
         if (user != null) {
             return ResponseEntity.ok("用户已登录");
         } else {
             return ResponseEntity.status(401).body("用户未登录");
         }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpSession session) {
+        session.invalidate();
+        return ResponseEntity.ok("登出成功");
     }
 }
