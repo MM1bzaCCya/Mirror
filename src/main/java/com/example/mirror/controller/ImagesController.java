@@ -35,12 +35,12 @@ public class ImagesController {
             return "更新失败";
         }
     }
-    @GetMapping("/api/images/user")
+    @GetMapping("/api/images/user")//显示用户自己的图片返回的是<List>Images
     public List<Images> findImagesByUserId(HttpSession session) {
-        Users user = (Users) session.getAttribute("user");
+        Users user = (Users) session.getAttribute("user");//使用CooKie判断是哪个用户
         if (user != null) {
-            int userId = user.getId();
-            return imagesMapper.selectImagesByUserId(userId);
+            int userId = user.getId();//获取登录用户的Id
+            return imagesMapper.selectImagesByUserId(userId);//使用登录用户的Id查询用户拥有的图片
         } else {
             return null;
         }
