@@ -31,34 +31,44 @@ public class UsersController {
         }
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody Users user, HttpSession session) {
-        Users loggedInUser = usersService.login(user.getUsername(), user.getPassword());
-        if (loggedInUser != null) {
-            session.setAttribute("user", loggedInUser); // 在session中设置用户信息
-            logger.info("用户 {} 登录成功", user.getUsername()); // 使用Logger输出登录成功信息
-            return ResponseEntity.ok("登录成功");
-        } else {
-            logger.info("用户 {} 登录失败", user.getUsername()); // 使用Logger输出登录失败信息
-            return ResponseEntity.status(401).body("登录失败，用户名或密码错误");
-        }
+@PostMapping("/login")
+public ResponseEntity<String> login(@RequestBody Users user, HttpSession session) {
+    Users loggedInUser = usersService.login(user.getUsername(), user.getPassword());
+    if (loggedInUser != null) {
+        session.setAttribute("user", loggedInUser); // 在session中设置用户信息
+        logger.info("用户 {} 登录成功", user.getUsername());
+        logger.info("用户信息: {}", loggedInUser);
+        return ResponseEntity.ok("登录成功");
+    } else {
+        logger.info("用户 {} 登录失败", user.getUsername());
+        return ResponseEntity.status(401).body("登录失败，用户名或密码错误");
     }
+}
 
     @GetMapping("/session")
     public ResponseEntity<String> getSessionInfo(HttpSession session) {
-        // 输出HttpSession信息到控制台
-        logger.info("会话 ID: {}", session.getId()); // 输出会话的ID
-        logger.info("会话创建时间: {}", session.getCreationTime());// 输出会话的创建时间
-        logger.info("会话最后访问时间: {}", session.getLastAccessedTime());// 输出会话的最后访问时间
-        logger.info("会话最大不活动间隔时间: {}", session.getMaxInactiveInterval());// 输出会话的最大不活动间隔时间
+        // 获取用户信息
+        Users user = (Users) session.getAttribute("user");
+        if (user == null) {
+            logger.info("用户未登录");
+            return ResponseEntity.status(401).body("用户未登录");
+        } else {
+            logger.info("用户信息: {}", user);
+            // 输出会话信息到控制台
+            logger.info("会话 ID: {}", session.getId());
+            logger.info("会话创建时间: {}", session.getCreationTime());
+            logger.info("会话最后访问时间: {}", session.getLastAccessedTime());
+            logger.info("会话最大不活动间隔时间: {}", session.getMaxInactiveInterval());
 
-        // 输出会话中所有属性的名称
-        Enumeration<String> attributeNames = session.getAttributeNames();
-        while (attributeNames.hasMoreElements()) {
-            String attributeName = attributeNames.nextElement();
-            logger.info("会话属性: {} = {}", attributeName, session.getAttribute(attributeName));
+            // 输出会话中所有属性的名称
+            Enumeration<String> attributeNames = session.getAttributeNames();
+            while (attributeNames.hasMoreElements()) {
+                String attributeName = attributeNames.nextElement();
+                logger.info("会话属性: {} = {}", attributeName, session.getAttribute(attributeName));
+            }
+            logger.info("用户信息: {}", user);
+            return ResponseEntity.ok("用户已登录\n会话信息已输出到控制台");
         }
-        return ResponseEntity.ok("Session信息已输出到控制台");
     }
 
     @GetMapping("/status")
