@@ -11,4 +11,6 @@ import java.util.List;
 public interface ImagesMapper extends BaseMapper<Images> {
     @Select("SELECT * FROM images")
     List<Images> selectAllImages();
+    @Select("SELECT * FROM Images WHERE userid = #{userId}")
+    List<Images> selectImagesByUserId(int userId);
 }

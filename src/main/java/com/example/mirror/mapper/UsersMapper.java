@@ -6,14 +6,11 @@ import com.example.mirror.entity.Users;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
-import java.util.List;
-
 @Mapper
 public interface UsersMapper extends BaseMapper<Users> {
-
-    @Select("SELECT * FROM users WHERE username = #{username} LIMIT 1")
+    @Select("SELECT * FROM users WHERE username = #{username}")
     Users findByUsername(String username);
 
-    @Select("SELECT * FROM users WHERE email = #{email} LIMIT 1")
+    @Select("SELECT * FROM users WHERE email = #{email}")
     Users findByEmail(String email);
 }

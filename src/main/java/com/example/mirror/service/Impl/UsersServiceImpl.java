@@ -1,3 +1,4 @@
+// src/main/java/com/example/mirror/service/impl/UsersServiceImpl.java
 package com.example.mirror.service.Impl;
 
 import com.example.mirror.entity.Users;
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.time.LocalDateTime;
 
 @Service
 public class UsersServiceImpl implements UsersService {
@@ -27,7 +30,7 @@ public class UsersServiceImpl implements UsersService {
             logger.info("邮箱 {} 已被占用", user.getEmail());
             throw new IllegalArgumentException("邮箱已被占用");
         }
-        user.setCreated(java.time.LocalDateTime.now());
+        user.setCreated(LocalDateTime.now());
         user.setPassword(PasswordUtil.encodePassword(user.getPassword()));
         int result = usersMapper.insert(user);
         if (result > 0) {

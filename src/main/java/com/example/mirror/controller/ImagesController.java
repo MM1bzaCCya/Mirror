@@ -2,7 +2,9 @@
 package com.example.mirror.controller;
 
 import com.example.mirror.entity.Images;
+import com.example.mirror.entity.Users;
 import com.example.mirror.mapper.ImagesMapper;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,6 +33,16 @@ public class ImagesController {
             return "更新成功";
         } else {
             return "更新失败";
+        }
+    }
+    @GetMapping("/api/images/user")
+    public List<Images> findImagesByUserId(HttpSession session) {
+        Users user = (Users) session.getAttribute("user");
+        if (user != null) {
+            int userId = user.getId();
+            return imagesMapper.selectImagesByUserId(userId);
+        } else {
+            return null;
         }
     }
 }
