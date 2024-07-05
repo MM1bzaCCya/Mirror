@@ -4,14 +4,18 @@ package com.example.mirror.controller;
 import com.example.mirror.entity.Images;
 import com.example.mirror.entity.Users;
 import com.example.mirror.mapper.ImagesMapper;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.servlet.http.HttpSession;
+
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @CrossOrigin
 @RestController
@@ -35,14 +39,59 @@ public class ImagesController {
             return "更新失败";
         }
     }
-    @GetMapping("/api/images/user")//显示用户自己的图片返回的是<List>Images
+
+    @GetMapping("/api/images/user")
     public List<Images> findImagesByUserId(HttpSession session) {
-        Users user = (Users) session.getAttribute("user");//使用CooKie判断是哪个用户
+        Users user = (Users) session.getAttribute("user");
         if (user != null) {
-            int userId = user.getId();//获取登录用户的Id
-            return imagesMapper.selectImagesByUserId(userId);//使用登录用户的Id查询用户拥有的图片
+            int userId = user.getId();
+            return imagesMapper.selectImagesByUserId(userId);
         } else {
             return null;
         }
     }
+
+    @PostMapping("/api/images/upload")
+    public String uploadImage(@RequestParam("file") MultipartFile file,
+                              @RequestParam("description") String description,
+                              @RequestParam("Public") boolean Public,
+                              HttpSession session) {
+        Users user = (Users) session.getAttribute("user");
+        if (user == null) {
+            return "用户未登录";
+        }
+
+        if (file.isEmpty()) {
+            return "上传失败，请选择一个文件";
+        }
+
+        String originalFileName = file.getOriginalFilename();
+        String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
+        String newFileName = UUID.randomUUID() + fileExtension;
+        String path = "F:\\java应用/Mirror/src/main/resources/static/images/";
+
+        try {
+            saveFile(file, path+newFileName);
+
+            Images image = new Images();
+            image.setUserid(user.getId());
+            image.setUrl("/images/" + newFileName);
+            image.setDescription(description);
+            image.setPublic(Public);
+            image.setCreated(LocalDateTime.now());
+
+            imagesMapper.insert(image);
+
+            return "上传成功";
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "上传失败";
+        }
+    }
+
+    private void saveFile(MultipartFile file, String path) throws IOException {
+        File uploadFile = new File(path);
+        file.transferTo(uploadFile);
+    }
+
 }

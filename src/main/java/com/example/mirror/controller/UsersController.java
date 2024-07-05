@@ -53,7 +53,6 @@ public ResponseEntity<String> login(@RequestBody Users user, HttpSession session
             logger.info("用户未登录");
             return ResponseEntity.status(401).body("用户未登录");
         } else {
-            logger.info("用户信息: {}", user);
             // 输出会话信息到控制台
             logger.info("会话 ID: {}", session.getId());
             logger.info("会话创建时间: {}", session.getCreationTime());

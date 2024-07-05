@@ -15,7 +15,7 @@ public class Images {
     private Integer userid;
     private String url;
     private String description;
-    private Boolean isPublic;
+    private Boolean Public;
     private LocalDateTime created;
     private LocalDateTime updated;
 
@@ -52,11 +52,11 @@ public class Images {
     }
 
     public Boolean getPublic() {
-        return isPublic;
+        return Public;
     }
 
     public void setPublic(Boolean aPublic) {
-        isPublic = aPublic;
+        Public = aPublic;
     }
 
     public LocalDateTime getCreated() {
@@ -82,7 +82,7 @@ public class Images {
                 ", userid=" + userid +
                 ", url='" + url + '\'' +
                 ", description='" + description + '\'' +
-                ", isPublic=" + isPublic +
+                ", Public=" + Public +
                 ", created=" + created +
                 ", updated=" + updated +
                 '}';
