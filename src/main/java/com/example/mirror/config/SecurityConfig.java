@@ -27,22 +27,23 @@ public class SecurityConfig {
         customFilter.setAuthenticationManager(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)));
 
         http
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/users/register", "/api/users/login"))
+              .csrf(csrf -> csrf.ignoringRequestMatchers("/api/users/register", "/api/users/login"))
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/api/users/register", "/api/users/login").permitAll()
-                                .anyRequest().authenticated()
-                )
-                .addFilterAt(customFilter, UsernamePasswordAuthenticationFilter.class) // 添加自定义过滤器
-                .formLogin(formLogin ->
-                        formLogin
-                                .loginPage("/login") // 指定自定义的登录页面
-                                .permitAll()
-                )
-                .logout(logout ->
-                        logout
-                                .logoutUrl("/api/users/logout").permitAll()
+//                                .requestMatchers("/api/users/register","/api/images","/images/**").permitAll()
+//                                .requestMatchers("/api/users/register").permitAll()
+                                .anyRequest().permitAll()
                 );
+//                .addFilterAt(customFilter, UsernamePasswordAuthenticationFilter.class) // 添加自定义过滤器
+//                .formLogin(formLogin ->
+//                        formLogin
+//                                .loginPage("http://localhost:8080/#/LoginForn") // 指定自定义的登录页面
+//                                .permitAll()
+//                )
+//                .logout(logout ->
+//                        logout
+//                              .logoutUrl("/api/users/logout").permitAll()
+//                );
         return http.build();
     }
 

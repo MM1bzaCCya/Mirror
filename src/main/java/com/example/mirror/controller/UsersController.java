@@ -1,14 +1,16 @@
 package com.example.mirror.controller;
 
 import com.example.mirror.entity.Users;
+import com.example.mirror.mapper.UsersMapper;
 import com.example.mirror.service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
 import jakarta.servlet.http.HttpSession;
+
+import java.util.List;
 
 @CrossOrigin
 @RestController
@@ -17,8 +19,28 @@ public class UsersController {
 
     @Autowired
     private UsersService usersService;
+    @Autowired
+    private UsersMapper usersMapper;
 
-    @PostMapping("/register")
+    @GetMapping("/test")
+    public List query(){
+        List<Users> list = usersMapper.selectList(null);
+        System.out.println(list);
+        return list;
+    }
+   @PostMapping("/test")
+   public String save(Users users){
+       // 最后做了数据校验，再存入数据库
+       int i = usersMapper.insert(users);
+       if(i>0){
+          return "插入成功";
+       }else {
+          return "插入数百";
+       }
+   }
+
+
+   @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody Users user) {
         boolean success = usersService.register(user);
         if (success) {
