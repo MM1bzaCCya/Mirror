@@ -44,7 +44,7 @@ public class UsersController {
             // 手动设置新的 Cookie
             Cookie sessionCookie = new Cookie("JSESSIONID", session.getId());
             sessionCookie.setPath("/");
-            sessionCookie.setHttpOnly(true);
+            sessionCookie.setHttpOnly(false);
             sessionCookie.setDomain("localhost"); // 设置为主机名即可
             sessionCookie.setMaxAge(24 * 60 * 60); // 设置Cookie过期时间，单位为秒
             response.addCookie(sessionCookie);
