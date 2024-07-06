@@ -13,6 +13,9 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -20,8 +23,11 @@ import java.util.UUID;
 @CrossOrigin
 @RestController
 public class ImagesController {
+
     @Autowired
     private ImagesMapper imagesMapper;
+    @Value("${file.upload-path}")
+    private String uploadDir;
 
     // 展示图片初版（公共空间）
     @GetMapping("/api/images")
@@ -53,15 +59,12 @@ public class ImagesController {
         }
     }
 
-
     // 上传图片
     @PostMapping("/api/images/upload")
-    public String uploadImage(
-          @RequestParam("file") MultipartFile file,
-          @RequestParam("description") String description,
-          @RequestParam("Public") boolean Public,
-          HttpSession session)
-    {
+    public String uploadImage(@RequestParam("file") MultipartFile file,
+                              @RequestParam("description") String description,
+                              @RequestParam("Public") boolean Public,
+                              HttpSession session) {
         Users user = (Users) session.getAttribute("user");
         if (user == null) {
             return "用户未登录";
@@ -77,7 +80,7 @@ public class ImagesController {
         String path = "E:/Mirror/ImageStore/";
 
         try {
-            saveFile(file, path+newFileName);
+            saveFile(file, newFileName);
 
             Images image = new Images();
             image.setUserid(user.getId());
@@ -95,9 +98,14 @@ public class ImagesController {
         }
     }
 
-    private void saveFile(MultipartFile file, String path) throws IOException {
-        File uploadFile = new File(path);
-        file.transferTo(uploadFile);
+    private void saveFile(MultipartFile file, String fileName) throws IOException {
+        Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
+        System.out.println(uploadPath);
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+        Path filePath = uploadPath.resolve(fileName);
+        file.transferTo(filePath.toFile());
     }
 
 }
