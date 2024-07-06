@@ -69,7 +69,6 @@ public class ImagesController {
         if (file.isEmpty()) {
             return "上传失败，请选择一个文件";
         }
-
         String originalFileName = file.getOriginalFilename();
         String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
         String newFileName = UUID.randomUUID() + fileExtension;
