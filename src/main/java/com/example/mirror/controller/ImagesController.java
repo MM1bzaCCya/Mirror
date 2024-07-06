@@ -13,6 +13,9 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -23,6 +26,8 @@ public class ImagesController {
 
     @Autowired
     private ImagesMapper imagesMapper;
+    @Value("${file.upload-path}")
+    private String uploadDir;
 
     @GetMapping("/api/images")
     public List<Images> findAllImages(){
@@ -68,10 +73,9 @@ public class ImagesController {
         String originalFileName = file.getOriginalFilename();
         String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
         String newFileName = UUID.randomUUID() + fileExtension;
-        String path = "F:\\java应用/Mirror/src/main/resources/static/images/";
 
         try {
-            saveFile(file, path+newFileName);
+            saveFile(file, newFileName);
 
             Images image = new Images();
             image.setUserid(user.getId());
@@ -89,9 +93,14 @@ public class ImagesController {
         }
     }
 
-    private void saveFile(MultipartFile file, String path) throws IOException {
-        File uploadFile = new File(path);
-        file.transferTo(uploadFile);
+    private void saveFile(MultipartFile file, String fileName) throws IOException {
+        Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
+        System.out.println(uploadPath);
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+        Path filePath = uploadPath.resolve(fileName);
+        file.transferTo(filePath.toFile());
     }
 
 }
