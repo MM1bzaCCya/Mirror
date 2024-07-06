@@ -58,8 +58,15 @@ public class ImagesController {
             return null;
         }
     }
-
-    // 上传图片
+    /**
+     * 处理图片上传请求
+     *
+     * @param file        上传的图片文件
+     * @param description 图片描述
+     * @param Public      图片是否公开
+     * @param session     HttpSession 对象
+     * @return 上传结果信息
+     */
     @PostMapping("/api/images/upload")
     public String uploadImage(@RequestParam("file") MultipartFile file,
                               @RequestParam("description") String description,
@@ -89,6 +96,8 @@ public class ImagesController {
             image.setCreated(LocalDateTime.now());
 
             imagesMapper.insert(image);
+            // 如果图片是公开的，则将其插入到 galleries 表中
+            copyPublicImageToGalleries(image);
 
             return "上传成功";
         } catch (IOException e) {
@@ -96,7 +105,13 @@ public class ImagesController {
             return "上传失败";
         }
     }
-
+    /**
+     * 保存文件到指定目录
+     *
+     * @param file     上传的文件
+     * @param fileName 保存的文件名
+     * @throws IOException 发生 I/O 错误时抛出
+     */
     private void saveFile(MultipartFile file, String fileName) throws IOException {
         Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
         System.out.println(uploadPath);
@@ -106,5 +121,18 @@ public class ImagesController {
         Path filePath = uploadPath.resolve(fileName);
         file.transferTo(filePath.toFile());
     }
+    /**
+     * 检查图片是否公开，如果是公开的且在 galleries 表中不存在，则插入到 galleries 表中
+     *
+     * @param image 图片记录
+     */
+    private void copyPublicImageToGalleries(Images image) {
+        if (image.getPublic()) { // 使用 Public
+            if (imagesMapper.countImageInGalleries(image.getId()) == 0) {
+                imagesMapper.insertIntoGalleries(image.getId(), image.getUserid(), image.getUrl());
+            }
+        }
+    }
 }
+
 

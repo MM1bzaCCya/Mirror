@@ -10,7 +10,7 @@ public class Galleries {
     private Integer id;
     private Integer userid;
     private Integer imageid;
-    private Integer position;
+    private String url;
     private LocalDateTime created;
 
     public Integer getId() {
@@ -37,12 +37,12 @@ public class Galleries {
         this.imageid = imageid;
     }
 
-    public Integer getPosition() {
-        return position;
+    public String getPosition() {
+        return url;
     }
 
-    public void setPosition(Integer position) {
-        this.position = position;
+    public void setPosition(String url) {
+        this.url = url;
     }
 
     public LocalDateTime getCreated() {
@@ -59,7 +59,7 @@ public class Galleries {
                 "id=" + id +
                 ", userid=" + userid +
                 ", imageid=" + imageid +
-                ", position=" + position +
+                ", position=" + url +
                 ", created=" + created +
                 '}';
     }
