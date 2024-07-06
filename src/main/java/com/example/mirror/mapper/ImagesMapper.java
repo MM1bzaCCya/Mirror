@@ -13,6 +13,7 @@ import java.util.List;
 public interface ImagesMapper extends BaseMapper<Images> {
     @Select("SELECT * FROM images")
     List<Images> selectAllImages();
+
     @Select("SELECT * FROM images WHERE userid = #{userId}")
     List<Images> selectImagesByUserId(int userId);
     // 查询某图片在 galleries 表中的记录数量
