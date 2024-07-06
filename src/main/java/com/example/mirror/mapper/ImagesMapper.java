@@ -15,11 +15,6 @@ public interface ImagesMapper extends BaseMapper<Images> {
     List<Images> selectAllImages();
     @Select("SELECT * FROM images WHERE userid = #{userId}")
     List<Images> selectImagesByUserId(int userId);
-
-    // 查询所有公开的图片
-    @Select("SELECT id, userid, url FROM images WHERE public = 1")
-    List<Images> selectPublicImages();
-
     // 查询某图片在 galleries 表中的记录数量
     @Select("SELECT COUNT(*) FROM galleries WHERE imageid = #{imageid}")
     int countImageInGalleries(@Param("imageid") int imageid);
