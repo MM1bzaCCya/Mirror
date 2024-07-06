@@ -39,21 +39,23 @@ public class UsersController {
     public ResponseEntity<String> login(@RequestBody Users user, HttpSession session, HttpServletResponse response) {
         Users loggedInUser = usersService.login(user.getUsername(), user.getPassword());
         if (loggedInUser != null) {
-            session.setAttribute("user", loggedInUser); // 在session中设置用户信息
-            logger.info("用户 {} 登录成功", user.getUsername());
+            // 将用户信息存储到 session 中
+            session.setAttribute("user", loggedInUser);
 
-            // 设置新的Cookie
-//        Cookie sessionCookie = new Cookie("JSESSIONID", session.getId());
-//        sessionCookie.setPath("/");
-//        sessionCookie.setHttpOnly(true);
-//        response.addCookie(sessionCookie);
-//
-//        System.out.println("Cookie Name: " + sessionCookie.getName());
-//        System.out.println("Cookie Value: " + sessionCookie.getValue());
-//        System.out.println("Cookie Path: " + sessionCookie.getPath());
-//        System.out.println("Cookie HttpOnly: " + sessionCookie.isHttpOnly());
-//
-//
+            // 手动设置新的 Cookie
+            Cookie sessionCookie = new Cookie("JSESSIONID", session.getId());
+            sessionCookie.setPath("/");
+            sessionCookie.setHttpOnly(true);
+            sessionCookie.setDomain("localhost"); // 设置为主机名即可
+            sessionCookie.setMaxAge(24 * 60 * 60); // 设置Cookie过期时间，单位为秒
+            response.addCookie(sessionCookie);
+
+            // 打印刚刚设置的 Cookie 信息到控制台
+            System.out.println("Cookie Name: " + sessionCookie.getName());
+            System.out.println("Cookie Value: " + sessionCookie.getValue());
+            System.out.println("Cookie Path: " + sessionCookie.getPath());
+            System.out.println("Cookie HttpOnly: " + sessionCookie.isHttpOnly());
+
             return ResponseEntity.ok("登录成功");
         } else {
             logger.info("用户 {} 登录失败", user.getUsername());

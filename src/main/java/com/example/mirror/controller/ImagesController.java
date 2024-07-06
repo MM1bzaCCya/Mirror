@@ -76,8 +76,7 @@ public class ImagesController {
 
         String originalFileName = file.getOriginalFilename();
         String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
-        String newFileName = UUID.randomUUID() + fileExtension;
-        String path = "E:/Mirror/ImageStore/";
+        String newFileName = UUID.randomUUID().toString() + fileExtension;
 
         try {
             saveFile(file, newFileName);
@@ -107,5 +106,5 @@ public class ImagesController {
         Path filePath = uploadPath.resolve(fileName);
         file.transferTo(filePath.toFile());
     }
-
 }
+
