@@ -69,9 +69,10 @@ public class ImagesController {
         if (file.isEmpty()) {
             return "上传失败，请选择一个文件";
         }
+
         String originalFileName = file.getOriginalFilename();
         String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
-        String newFileName = UUID.randomUUID() + fileExtension;
+        String newFileName = UUID.randomUUID().toString() + fileExtension;
 
         try {
             saveFile(file, newFileName);
@@ -101,5 +102,5 @@ public class ImagesController {
         Path filePath = uploadPath.resolve(fileName);
         file.transferTo(filePath.toFile());
     }
-
 }
+
