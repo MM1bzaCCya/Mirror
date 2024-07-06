@@ -20,15 +20,16 @@ import java.util.UUID;
 @CrossOrigin
 @RestController
 public class ImagesController {
-
     @Autowired
     private ImagesMapper imagesMapper;
 
+    // 展示图片初版（公共空间）
     @GetMapping("/api/images")
     public List<Images> findAllImages(){
         return imagesMapper.selectAllImages();
     }
 
+    // 修改图片（编辑图片使用）
     @PutMapping("/api/images")
     public String update(Images images){
         int i = imagesMapper.updateById(images);
@@ -40,6 +41,7 @@ public class ImagesController {
         }
     }
 
+    // 个人空间
     @GetMapping("/api/images/user")
     public List<Images> findImagesByUserId(HttpSession session) {
         Users user = (Users) session.getAttribute("user");
@@ -51,11 +53,15 @@ public class ImagesController {
         }
     }
 
+
+    // 上传图片
     @PostMapping("/api/images/upload")
-    public String uploadImage(@RequestParam("file") MultipartFile file,
-                              @RequestParam("description") String description,
-                              @RequestParam("Public") boolean Public,
-                              HttpSession session) {
+    public String uploadImage(
+          @RequestParam("file") MultipartFile file,
+          @RequestParam("description") String description,
+          @RequestParam("Public") boolean Public,
+          HttpSession session)
+    {
         Users user = (Users) session.getAttribute("user");
         if (user == null) {
             return "用户未登录";
@@ -68,7 +74,7 @@ public class ImagesController {
         String originalFileName = file.getOriginalFilename();
         String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
         String newFileName = UUID.randomUUID() + fileExtension;
-        String path = "F:\\java应用/Mirror/src/main/resources/static/images/";
+        String path = "E:/Mirror/ImageStore/";
 
         try {
             saveFile(file, path+newFileName);
