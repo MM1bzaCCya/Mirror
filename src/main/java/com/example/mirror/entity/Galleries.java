@@ -13,6 +13,8 @@ public class Galleries {
     private Integer imageid;
     private String url;
     private LocalDateTime created;
+    private String description; // 新增字段
+    private String tags;
 
     public Integer getId() {
         return id;
@@ -54,6 +56,21 @@ public class Galleries {
         this.created = created;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
+    }
     @Override
     public String toString() {
         return "Galleries{" +
@@ -62,6 +79,8 @@ public class Galleries {
                 ", url=" + url + '\'' +
                 ", imageid=" + imageid    +
                 ", created=" + created +
+                ", description='" + description + '\'' +
+                ", tags='" + tags + '\'' +
                 '}';
     }
 }

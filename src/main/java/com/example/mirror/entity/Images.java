@@ -18,6 +18,7 @@ public class Images {
     private Boolean Public;
     private LocalDateTime created;
     private LocalDateTime updated;
+    private String tags;
 
     public Integer getId() {
         return id;
@@ -74,6 +75,13 @@ public class Images {
     public void setUpdated(LocalDateTime updated) {
         this.updated = updated;
     }
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
+    }
 
     @Override
     public String toString() {
@@ -85,6 +93,7 @@ public class Images {
                 ", Public=" + Public +
                 ", created=" + created +
                 ", updated=" + updated +
+                ", tags='" + tags + '\'' +
                 '}';
     }
 }
