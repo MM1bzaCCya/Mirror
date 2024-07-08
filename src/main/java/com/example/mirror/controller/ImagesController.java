@@ -3,9 +3,11 @@ package com.example.mirror.controller;
 
 import com.example.mirror.entity.Images;
 import com.example.mirror.entity.Users;
+import com.example.mirror.mapper.GalleriesMapper;
 import com.example.mirror.mapper.ImagesMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,25 +28,48 @@ public class ImagesController {
 
     @Autowired
     private ImagesMapper imagesMapper;
+
+    @Autowired
+    private GalleriesMapper galleriesMapper;
+
     @Value("${file.upload-path}")
     private String uploadDir;
+
+    @PutMapping("/api/images")
+    public String updateImage(@RequestParam("id") int id,
+                                              @RequestParam("description") String description,
+                                              @RequestParam("tags") String tags,
+                                              @RequestParam("Public") boolean Public,
+                                              HttpSession session) {
+        Users user = (Users) session.getAttribute("user");
+        if (user == null) {
+            return "用户未登录";
+        }
+
+        // 通过ID查询图片
+        Images image = imagesMapper.selectById(id);
+        if (image == null) {
+            return "图片未找到";
+        }
+        image.setDescription(description);
+        image.setTags(tags);
+        image.setPublic(Public);
+        imagesMapper.updateImage(id, description, tags, Public);
+        if (!Public) {
+            galleriesMapper.deleteFromGalleries(id);
+        }
+        // 如果 public 状态变为 true，插入 galleries 表中
+        if (Public) {
+            saveOrUpdatePublicImageToGalleries(image);
+        }
+        return "更新成功";
+    }
+
 
     @GetMapping("/api/images")
     public List<Images> findAllImages(){
         return imagesMapper.selectAllImages();
     }
-
-    @PutMapping("/api/images")
-    public String update(Images images){
-        int i = imagesMapper.updateById(images);
-        System.out.println(i);
-        if(i > 0){
-            return "更新成功";
-        } else {
-            return "更新失败";
-        }
-    }
-
     @GetMapping("/api/images/user")
     public List<Images> findImagesByUserId(HttpSession session) {
         Users user = (Users) session.getAttribute("user");
@@ -55,19 +80,11 @@ public class ImagesController {
             return null;
         }
     }
-    /**
-     * 处理图片上传请求
-     *
-     * @param file        上传的图片文件
-     * @param description 图片描述
-     * @param Public      图片是否公开
-     * @param session     HttpSession 对象
-     * @return 上传结果信息
-     */
     @PostMapping("/api/images/upload")
     public String uploadImage(@RequestParam("file") MultipartFile file,
                               @RequestParam("description") String description,
                               @RequestParam("Public") boolean Public,
+                              @RequestParam("tags") String tags,
                               HttpSession session) {
         Users user = (Users) session.getAttribute("user");
         if (user == null) {
@@ -91,10 +108,11 @@ public class ImagesController {
             image.setDescription(description);
             image.setPublic(Public);
             image.setCreated(LocalDateTime.now());
+            image.setTags(tags);
 
             imagesMapper.insert(image);
             // 如果图片是公开的，则将其插入到 galleries 表中
-            copyPublicImageToGalleries(image);
+            saveOrUpdatePublicImageToGalleries(image);
 
             return "上传成功";
         } catch (IOException e) {
@@ -102,13 +120,7 @@ public class ImagesController {
             return "上传失败";
         }
     }
-    /**
-     * 保存文件到指定目录
-     *
-     * @param file     上传的文件
-     * @param fileName 保存的文件名
-     * @throws IOException 发生 I/O 错误时抛出
-     */
+
     private void saveFile(MultipartFile file, String fileName) throws IOException {
         Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
         System.out.println(uploadPath);
@@ -118,15 +130,13 @@ public class ImagesController {
         Path filePath = uploadPath.resolve(fileName);
         file.transferTo(filePath.toFile());
     }
-    /**
-     * 检查图片是否公开，如果是公开的且在 galleries 表中不存在，则插入到 galleries 表中
-     *
-     * @param image 图片记录
-     */
-    private void copyPublicImageToGalleries(Images image) {
-        if (image.getPublic()) { // 使用 Public
+
+    private void saveOrUpdatePublicImageToGalleries(Images image) {
+        if (image.getPublic()) {
             if (imagesMapper.countImageInGalleries(image.getId()) == 0) {
-                imagesMapper.insertIntoGalleries(image.getId(), image.getUserid(), image.getUrl());
+                imagesMapper.insertIntoGalleries(image.getId(), image.getUserid(), image.getUrl(), image.getDescription(), image.getTags());
+            } else {
+                galleriesMapper.updateInGalleries(image.getId(), image.getDescription(), image.getTags());
             }
         }
     }
