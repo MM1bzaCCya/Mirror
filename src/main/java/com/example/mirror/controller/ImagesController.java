@@ -54,12 +54,21 @@ public class ImagesController {
         // 将 List<String> tagsJson 转换为分号分隔的字符串
         String tagsString = String.join(";", tagsJson);
 
-        image.setDescription(description);
-        image.setTags(tagsString);
-        image.setIsPublic(Public);
-        imagesMapper.updateImage(id, description, tagsString, Public);
-        if (!Public) {
-            galleriesMapper.deleteFromGalleries(id);
+            image.setDescription(description);
+            image.setTags(tagsString);
+            image.setIsPublic(isPublic);
+            imagesMapper.updateImage(id, description, tagsString, isPublic);
+            if (!isPublic) {
+                galleriesMapper.deleteFromGalleries(id);
+            }
+            // 如果 public 状态变为 true，插入 galleries 表中
+            if (isPublic) {
+                saveOrUpdatePublicImageToGalleries(image);
+            }
+            return "更新成功";
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "更新失败";
         }
         // 如果 public 状态变为 true，插入 galleries 表中
         if (Public) {
@@ -86,8 +95,8 @@ public class ImagesController {
     @PostMapping("/api/images/upload")
     public String uploadImage(@RequestParam("file") MultipartFile file,
                               @RequestParam("description") String description,
-                              @RequestParam("isPublic") boolean Public,
-                              @RequestParam("tags") List<String> tagsJson,
+                              @RequestParam("isPublic") boolean isPublic,
+                              @RequestParam("tags") String tagsJson,
                               HttpSession session) {
         Users user = (Users) session.getAttribute("user");
         if (user == null) {
@@ -112,7 +121,7 @@ public class ImagesController {
             image.setUserid(user.getId());
             image.setUrl("/images/" + newFileName);
             image.setDescription(description);
-            image.setIsPublic(Public);
+            image.setIsPublic(isPublic);
             image.setCreated(LocalDateTime.now());
             image.setTags(tagsString);
 
