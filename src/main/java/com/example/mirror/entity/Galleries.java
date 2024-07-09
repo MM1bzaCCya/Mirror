@@ -40,11 +40,11 @@ public class Galleries {
         this.imageid = imageid;
     }
 
-    public String getPosition() {
+    public String getUrl() {
         return url;
     }
 
-    public void setPosition(String url) {
+    public void setUrl(String url) {
         this.url = url;
     }
 
@@ -76,8 +76,8 @@ public class Galleries {
         return "Galleries{" +
                 "id=" + id +
                 ", userid=" + userid +
-                ", imageid=" + imageid +
-                ", position=" + url +
+                ", url=" + url + '\'' +
+                ", imageid=" + imageid    +
                 ", created=" + created +
                 ", description='" + description + '\'' +
                 ", tags='" + tags + '\'' +

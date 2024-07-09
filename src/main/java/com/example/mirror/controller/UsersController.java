@@ -11,10 +11,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpSession;
-
-import java.util.Arrays;
+import java.time.Duration;
 import java.util.Enumeration;
+import java.util.Arrays;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/api/users")
 public class UsersController {
