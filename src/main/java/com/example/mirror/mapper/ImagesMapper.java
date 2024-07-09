@@ -15,8 +15,8 @@ public interface ImagesMapper extends BaseMapper<Images> {
     // 查询某图片在 galleries 表中的记录数量
     @Select("SELECT COUNT(*) FROM galleries WHERE imageid = #{imageid}")
     int countImageInGalleries(@Param("imageid") int imageid);
-    @Update("UPDATE images SET description = #{description}, tags = #{tags}, public = #{Public} WHERE id = #{id}")
-    int updateImage(@Param("id") int id, @Param("description") String description, @Param("tags") String tags, @Param("Public") boolean Public);
+    @Update("UPDATE images SET description = #{description}, tags = #{tags}, isPublic = #{isPublic} WHERE id = #{id}")
+    int updateImage(@Param("id") int id, @Param("description") String description, @Param("tags") String tags, @Param("isPublic") boolean isPublic);
 
 
     // 将图片插入到 galleries 表中

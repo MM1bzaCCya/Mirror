@@ -59,7 +59,7 @@ public class ImagesController {
 
             image.setDescription(description);
             image.setTags(tagsString);
-            image.setPublic(isPublic);
+            image.setIsPublic(isPublic);
             imagesMapper.updateImage(id, description, tagsString, isPublic);
             if (!isPublic) {
                 galleriesMapper.deleteFromGalleries(id);
@@ -93,7 +93,7 @@ public class ImagesController {
     @PostMapping("/api/images/upload")
     public String uploadImage(@RequestParam("file") MultipartFile file,
                               @RequestParam("description") String description,
-                              @RequestParam("Public") boolean Public,
+                              @RequestParam("isPublic") boolean isPublic,
                               @RequestParam("tags") String tagsJson,
                               HttpSession session) {
         Users user = (Users) session.getAttribute("user");
@@ -116,7 +116,7 @@ public class ImagesController {
             image.setUserid(user.getId());
             image.setUrl("/images/" + newFileName);
             image.setDescription(description);
-            image.setPublic(Public);
+            image.setIsPublic(isPublic);
             image.setCreated(LocalDateTime.now());
 
             // 使用ObjectMapper将JSON数组转换为String
@@ -148,7 +148,7 @@ public class ImagesController {
     }
 
     private void saveOrUpdatePublicImageToGalleries(Images image) {
-        if (image.getPublic()) {
+        if (image.getIsPublic()) {
             if (imagesMapper.countImageInGalleries(image.getId()) == 0) {
                 imagesMapper.insertIntoGalleries(image.getId(), image.getUserid(), image.getUrl(), image.getDescription(), image.getTags());
             } else {
