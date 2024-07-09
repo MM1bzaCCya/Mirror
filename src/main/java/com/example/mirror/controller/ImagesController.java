@@ -38,7 +38,7 @@ public class ImagesController {
     public String updateImage(@RequestParam("id") int id,
                               @RequestParam("description") String description,
                               @RequestParam("tags") String tagsJson,
-                              @RequestParam("Public") boolean Public,
+                              @RequestParam("isPublic") boolean isPublic,
                               HttpSession session) {
         Users user = (Users) session.getAttribute("user");
         if (user == null) {
@@ -59,13 +59,13 @@ public class ImagesController {
 
             image.setDescription(description);
             image.setTags(tagsString);
-            image.setPublic(Public);
-            imagesMapper.updateImage(id, description, tagsString, Public);
-            if (!Public) {
+            image.setPublic(isPublic);
+            imagesMapper.updateImage(id, description, tagsString, isPublic);
+            if (!isPublic) {
                 galleriesMapper.deleteFromGalleries(id);
             }
             // 如果 public 状态变为 true，插入 galleries 表中
-            if (Public) {
+            if (isPublic) {
                 saveOrUpdatePublicImageToGalleries(image);
             }
             return "更新成功";

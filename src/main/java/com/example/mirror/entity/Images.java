@@ -15,7 +15,7 @@ public class Images {
     private Integer userid;
     private String url;
     private String description;
-    private Boolean Public;
+    private Boolean isPublic;
     private LocalDateTime created;
     private LocalDateTime updated;
     private String tags;
@@ -53,11 +53,11 @@ public class Images {
     }
 
     public Boolean getPublic() {
-        return Public;
+        return isPublic;
     }
 
     public void setPublic(Boolean aPublic) {
-        Public = aPublic;
+        isPublic = aPublic;
     }
 
     public LocalDateTime getCreated() {
@@ -75,6 +75,7 @@ public class Images {
     public void setUpdated(LocalDateTime updated) {
         this.updated = updated;
     }
+
     public String getTags() {
         return tags;
     }
@@ -83,17 +84,31 @@ public class Images {
         this.tags = tags;
     }
 
+    public Images() {
+    }
+
+    public Images(Integer id, Integer userid, String url, String description, Boolean isPublic, LocalDateTime created, LocalDateTime updated, String tags) {
+        this.id = id;
+        this.userid = userid;
+        this.url = url;
+        this.description = description;
+        this.isPublic = isPublic;
+        this.created = created;
+        this.updated = updated;
+        this.tags = tags;
+    }
+
     @Override
     public String toString() {
-        return "Image{" +
-                "id=" + id +
-                ", userid=" + userid +
-                ", url='" + url + '\'' +
-                ", description='" + description + '\'' +
-                ", Public=" + Public +
-                ", created=" + created +
-                ", updated=" + updated +
-                ", tags='" + tags + '\'' +
-                '}';
+        return "Images{" +
+              "id=" + id +
+              ", userid=" + userid +
+              ", url='" + url + '\'' +
+              ", description='" + description + '\'' +
+              ", isPublic=" + isPublic +
+              ", created=" + created +
+              ", updated=" + updated +
+              ", tags='" + tags + '\'' +
+              '}';
     }
 }
