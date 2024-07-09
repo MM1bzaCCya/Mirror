@@ -5,15 +5,14 @@ import com.example.mirror.entity.Images;
 import com.example.mirror.entity.Users;
 import com.example.mirror.mapper.GalleriesMapper;
 import com.example.mirror.mapper.ImagesMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.servlet.http.HttpSession;
-
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -37,10 +36,10 @@ public class ImagesController {
 
     @PutMapping("/api/images")
     public String updateImage(@RequestParam("id") int id,
-                                              @RequestParam("description") String description,
-                                              @RequestParam("tags") String tags,
-                                              @RequestParam("Public") boolean Public,
-                                              HttpSession session) {
+                              @RequestParam("description") String description,
+                              @RequestParam("tags") String tagsJson,
+                              @RequestParam("Public") boolean Public,
+                              HttpSession session) {
         Users user = (Users) session.getAttribute("user");
         if (user == null) {
             return "用户未登录";
@@ -51,18 +50,29 @@ public class ImagesController {
         if (image == null) {
             return "图片未找到";
         }
-        image.setDescription(description);
-        image.setTags(tags);
-        image.setPublic(Public);
-        imagesMapper.updateImage(id, description, tags, Public);
-        if (!Public) {
-            galleriesMapper.deleteFromGalleries(id);
+
+        try {
+            // 初始化 ObjectMapper
+            ObjectMapper objectMapper = new ObjectMapper();
+            List<String> tagsList = objectMapper.readValue(tagsJson, new TypeReference<List<String>>() {});
+            String tagsString = String.join(";", tagsList);
+
+            image.setDescription(description);
+            image.setTags(tagsString);
+            image.setPublic(Public);
+            imagesMapper.updateImage(id, description, tagsString, Public);
+            if (!Public) {
+                galleriesMapper.deleteFromGalleries(id);
+            }
+            // 如果 public 状态变为 true，插入 galleries 表中
+            if (Public) {
+                saveOrUpdatePublicImageToGalleries(image);
+            }
+            return "更新成功";
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "更新失败";
         }
-        // 如果 public 状态变为 true，插入 galleries 表中
-        if (Public) {
-            saveOrUpdatePublicImageToGalleries(image);
-        }
-        return "更新成功";
     }
 
 
@@ -84,7 +94,7 @@ public class ImagesController {
     public String uploadImage(@RequestParam("file") MultipartFile file,
                               @RequestParam("description") String description,
                               @RequestParam("Public") boolean Public,
-                              @RequestParam("tags") String tags,
+                              @RequestParam("tags") String tagsJson,
                               HttpSession session) {
         Users user = (Users) session.getAttribute("user");
         if (user == null) {
@@ -108,7 +118,12 @@ public class ImagesController {
             image.setDescription(description);
             image.setPublic(Public);
             image.setCreated(LocalDateTime.now());
-            image.setTags(tags);
+
+            // 使用ObjectMapper将JSON数组转换为String
+            ObjectMapper objectMapper = new ObjectMapper();
+            List<String> tagsList = objectMapper.readValue(tagsJson, new TypeReference<List<String>>() {});
+            String tagsString = String.join(";", tagsList);
+            image.setTags(tagsString);
 
             imagesMapper.insert(image);
             // 如果图片是公开的，则将其插入到 galleries 表中
@@ -120,6 +135,7 @@ public class ImagesController {
             return "上传失败";
         }
     }
+
 
     private void saveFile(MultipartFile file, String fileName) throws IOException {
         Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
