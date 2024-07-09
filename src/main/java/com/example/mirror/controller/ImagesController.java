@@ -58,7 +58,7 @@ public class ImagesController {
 
             image.setDescription(description);
             image.setTags(tagsString);
-            image.setIspublic(isPublic);
+            image.setisPublic(isPublic);
             imagesMapper.updateImage(id, description, tagsString, isPublic);
             if (!isPublic) {
                 galleriesMapper.deleteFromGalleries(id);
@@ -116,8 +116,11 @@ public class ImagesController {
             image.setUserid(user.getId());
             image.setUrl("/images/" + newFileName);
             image.setDescription(description);
-            image.setIspublic(isPublic);
+            image.setisPublic(isPublic);
             image.setCreated(LocalDateTime.now());
+
+            // 检查点：输出 tagsJson 内容
+            System.out.println("tagsJson: " + tagsJson);
 
             // 使用ObjectMapper将JSON数组转换为String
             ObjectMapper objectMapper = new ObjectMapper();
@@ -157,7 +160,7 @@ public class ImagesController {
     }
 
     private void saveOrUpdatePublicImageToGalleries(Images image) {
-        if (image.getIspublic()) {
+        if (image.getisPublic()) {
             if (imagesMapper.countImageInGalleries(image.getId()) == 0) {
                 imagesMapper.insertIntoGalleries(image.getId(), image.getUserid(), image.getUrl(), image.getDescription(), image.getTags());
             } else {
