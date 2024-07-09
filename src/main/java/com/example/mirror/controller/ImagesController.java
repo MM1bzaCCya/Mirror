@@ -135,6 +135,16 @@ public class ImagesController {
             return "上传失败";
         }
     }
+    @DeleteMapping("/api/images")
+    public String deleteImage(@RequestParam("id") int id) {
+        // 检查图片是否在 galleries 表中存在
+        if (imagesMapper.countImageInGalleries(id) > 0) {
+            galleriesMapper.deleteFromGalleries(id);
+        }
+        // 删除 images 表中的图片记录
+        imagesMapper.deleteById(id);
+        return "删除成功";
+    }
 
     private void saveFile(MultipartFile file, String fileName) throws IOException {
         Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();

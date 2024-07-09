@@ -24,4 +24,6 @@ public interface ImagesMapper extends BaseMapper<Images> {
     // 将图片插入到 galleries 表中
     @Insert("INSERT INTO galleries (imageid, userid, url, description, tags) VALUES (#{imageid}, #{userid}, #{url}, #{description}, #{tags})")
     void insertIntoGalleries(@Param("imageid") int imageid, @Param("userid") int userid, @Param("url") String url, @Param("description") String description, @Param("tags") String tags);
+    @Delete("DELETE FROM images WHERE id = #{id}")
+    void deleteById(@Param("id") int id);
 }
