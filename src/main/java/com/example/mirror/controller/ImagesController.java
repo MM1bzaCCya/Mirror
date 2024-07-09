@@ -37,8 +37,8 @@ public class ImagesController {
     @PutMapping("/api/images")
     public String updateImage(@RequestParam("id") int id,
                               @RequestParam("description") String description,
-                              @RequestParam("tags") String tagsJson,
-                              @RequestParam("isPublic") boolean isPublic,
+                              @RequestParam("tags") List<String> tagsJson,
+                              @RequestParam("isPublic") boolean Public,
                               HttpSession session) {
         Users user = (Users) session.getAttribute("user");
         if (user == null) {
@@ -51,28 +51,21 @@ public class ImagesController {
             return "图片未找到";
         }
 
-        try {
-            // 初始化 ObjectMapper
-            ObjectMapper objectMapper = new ObjectMapper();
-            List<String> tagsList = objectMapper.readValue(tagsJson, new TypeReference<List<String>>() {});
-            String tagsString = String.join(";", tagsList);
+        // 将 List<String> tagsJson 转换为分号分隔的字符串
+        String tagsString = String.join(";", tagsJson);
 
-            image.setDescription(description);
-            image.setTags(tagsString);
-            image.setIsPublic(isPublic);
-            imagesMapper.updateImage(id, description, tagsString, isPublic);
-            if (!isPublic) {
-                galleriesMapper.deleteFromGalleries(id);
-            }
-            // 如果 public 状态变为 true，插入 galleries 表中
-            if (isPublic) {
-                saveOrUpdatePublicImageToGalleries(image);
-            }
-            return "更新成功";
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "更新失败";
+        image.setDescription(description);
+        image.setTags(tagsString);
+        image.setIsPublic(Public);
+        imagesMapper.updateImage(id, description, tagsString, Public);
+        if (!Public) {
+            galleriesMapper.deleteFromGalleries(id);
         }
+        // 如果 public 状态变为 true，插入 galleries 表中
+        if (Public) {
+            saveOrUpdatePublicImageToGalleries(image);
+        }
+        return "更新成功";
     }
 
 
@@ -93,8 +86,8 @@ public class ImagesController {
     @PostMapping("/api/images/upload")
     public String uploadImage(@RequestParam("file") MultipartFile file,
                               @RequestParam("description") String description,
-                              @RequestParam("isPublic") boolean isPublic,
-                              @RequestParam("tags") String tagsJson,
+                              @RequestParam("isPublic") boolean Public,
+                              @RequestParam("tags") List<String> tagsJson,
                               HttpSession session) {
         Users user = (Users) session.getAttribute("user");
         if (user == null) {
@@ -112,17 +105,15 @@ public class ImagesController {
         try {
             saveFile(file, newFileName);
 
+            // 将 List<String> tagsJson 转换为分号分隔的字符串
+            String tagsString = String.join(";", tagsJson);
+
             Images image = new Images();
             image.setUserid(user.getId());
             image.setUrl("/images/" + newFileName);
             image.setDescription(description);
-            image.setIsPublic(isPublic);
+            image.setIsPublic(Public);
             image.setCreated(LocalDateTime.now());
-
-            // 使用ObjectMapper将JSON数组转换为String
-            ObjectMapper objectMapper = new ObjectMapper();
-            List<String> tagsList = objectMapper.readValue(tagsJson, new TypeReference<List<String>>() {});
-            String tagsString = String.join(";", tagsList);
             image.setTags(tagsString);
 
             imagesMapper.insert(image);
@@ -134,6 +125,16 @@ public class ImagesController {
             e.printStackTrace();
             return "上传失败";
         }
+    }
+    @DeleteMapping("/api/images")
+    public String deleteImage(@RequestParam("id") int id) {
+        // 检查图片是否在 galleries 表中存在
+        if (imagesMapper.countImageInGalleries(id) > 0) {
+            galleriesMapper.deleteFromGalleries(id);
+        }
+        // 删除 images 表中的图片记录
+        imagesMapper.deleteById(id);
+        return "删除成功";
     }
 
 

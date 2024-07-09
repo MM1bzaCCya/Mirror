@@ -18,7 +18,8 @@ public interface ImagesMapper extends BaseMapper<Images> {
     @Update("UPDATE images SET description = #{description}, tags = #{tags}, isPublic = #{isPublic} WHERE id = #{id}")
     int updateImage(@Param("id") int id, @Param("description") String description, @Param("tags") String tags, @Param("isPublic") boolean isPublic);
 
-
+    @Delete("DELETE FROM images WHERE id = #{id}")
+    void deleteById(@Param("id") int id);
     // 将图片插入到 galleries 表中
     @Insert("INSERT INTO galleries (imageid, userid, url, description, tags) VALUES (#{imageid}, #{userid}, #{url}, #{description}, #{tags})")
     void insertIntoGalleries(@Param("imageid") int imageid, @Param("userid") int userid, @Param("url") String url, @Param("description") String description, @Param("tags") String tags);
