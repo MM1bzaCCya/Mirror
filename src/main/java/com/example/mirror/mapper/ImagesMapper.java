@@ -10,18 +10,18 @@ import java.util.List;
 public interface ImagesMapper extends BaseMapper<Images> {
     @Select("SELECT * FROM images")
     List<Images> selectAllImages();
+
     @Select("SELECT * FROM images WHERE userid = #{userId}")
     List<Images> selectImagesByUserId(int userId);
+
     // 查询某图片在 galleries 表中的记录数量
     @Select("SELECT COUNT(*) FROM galleries WHERE imageid = #{imageid}")
     int countImageInGalleries(@Param("imageid") int imageid);
-    @Update("UPDATE images SET description = #{description}, tags = #{tags}, isPublic = #{isPublic} WHERE id = #{id}")
-    int updateImage(@Param("id") int id, @Param("description") String description, @Param("tags") String tags, @Param("isPublic") boolean isPublic);
 
-    @Delete("DELETE FROM images WHERE id = #{id}")
-    void deleteById(@Param("id") int id);
+    @Update("UPDATE images SET description = #{description}, tags = #{tags}, ispublic = #{ispublic} WHERE id = #{id}")
+    int updateImage(@Param("id") int id, @Param("description") String description, @Param("tags") String tags, @Param("ispublic") boolean ispublic);
+
     // 将图片插入到 galleries 表中
     @Insert("INSERT INTO galleries (imageid, userid, url, description, tags) VALUES (#{imageid}, #{userid}, #{url}, #{description}, #{tags})")
     void insertIntoGalleries(@Param("imageid") int imageid, @Param("userid") int userid, @Param("url") String url, @Param("description") String description, @Param("tags") String tags);
 }
-

@@ -1,10 +1,8 @@
-// Image.java
 package com.example.mirror.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
 
 import java.time.LocalDateTime;
 
@@ -15,11 +13,12 @@ public class Images {
     private Integer userid;
     private String url;
     private String description;
-    private Boolean isPublic;
+    private Boolean ispublic;  // 确保与数据库中的列名一致
     private LocalDateTime created;
     private LocalDateTime updated;
     private String tags;
 
+    // getters and setters
     public Integer getId() {
         return id;
     }
@@ -52,12 +51,12 @@ public class Images {
         this.description = description;
     }
 
-    public Boolean getIsPublic() {
-        return isPublic;
+    public Boolean getIspublic() {
+        return ispublic;
     }
 
-    public void setIsPublic(Boolean aPublic) {
-        isPublic = aPublic;
+    public void setIspublic(Boolean ispublic) {
+        this.ispublic = ispublic;
     }
 
     public LocalDateTime getCreated() {
@@ -101,14 +100,14 @@ public class Images {
     @Override
     public String toString() {
         return "Images{" +
-              "id=" + id +
-              ", userid=" + userid +
-              ", url='" + url + '\'' +
-              ", description='" + description + '\'' +
-              ", isPublic=" + isPublic +
-              ", created=" + created +
-              ", updated=" + updated +
-              ", tags='" + tags + '\'' +
-              '}';
+                "id=" + id +
+                ", userid=" + userid +
+                ", url='" + url + '\'' +
+                ", description='" + description + '\'' +
+                ", ispublic=" + ispublic +
+                ", created=" + created +
+                ", updated=" + updated +
+                ", tags='" + tags + '\'' +
+                '}';
     }
 }

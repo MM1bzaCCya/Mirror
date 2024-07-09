@@ -1,4 +1,3 @@
-// src/main/java/com/example/mirror/controller/ImagesController.java
 package com.example.mirror.controller;
 
 import com.example.mirror.entity.Images;
@@ -37,8 +36,8 @@ public class ImagesController {
     @PutMapping("/api/images")
     public String updateImage(@RequestParam("id") int id,
                               @RequestParam("description") String description,
-                              @RequestParam("tags") List<String> tagsJson,
-                              @RequestParam("isPublic") boolean Public,
+                              @RequestParam("tags") String tagsJson,
+                              @RequestParam("ispublic") boolean isPublic,
                               HttpSession session) {
         Users user = (Users) session.getAttribute("user");
         if (user == null) {
@@ -56,7 +55,7 @@ public class ImagesController {
 
             image.setDescription(description);
             image.setTags(tagsString);
-            image.setIsPublic(isPublic);
+            image.setIspublic(isPublic);
             imagesMapper.updateImage(id, description, tagsString, isPublic);
             if (!isPublic) {
                 galleriesMapper.deleteFromGalleries(id);
@@ -77,11 +76,11 @@ public class ImagesController {
         return "更新成功";
     }
 
-
     @GetMapping("/api/images")
     public List<Images> findAllImages(){
         return imagesMapper.selectAllImages();
     }
+
     @GetMapping("/api/images/user")
     public List<Images> findImagesByUserId(HttpSession session) {
         Users user = (Users) session.getAttribute("user");
@@ -92,10 +91,11 @@ public class ImagesController {
             return null;
         }
     }
+
     @PostMapping("/api/images/upload")
     public String uploadImage(@RequestParam("file") MultipartFile file,
                               @RequestParam("description") String description,
-                              @RequestParam("isPublic") boolean isPublic,
+                              @RequestParam("ispublic") boolean isPublic,
                               @RequestParam("tags") String tagsJson,
                               HttpSession session) {
         Users user = (Users) session.getAttribute("user");
@@ -121,7 +121,7 @@ public class ImagesController {
             image.setUserid(user.getId());
             image.setUrl("/images/" + newFileName);
             image.setDescription(description);
-            image.setIsPublic(isPublic);
+            image.setIspublic(isPublic);
             image.setCreated(LocalDateTime.now());
             image.setTags(tagsString);
 
@@ -146,7 +146,6 @@ public class ImagesController {
         return "删除成功";
     }
 
-
     private void saveFile(MultipartFile file, String fileName) throws IOException {
         Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
         System.out.println(uploadPath);
@@ -158,7 +157,7 @@ public class ImagesController {
     }
 
     private void saveOrUpdatePublicImageToGalleries(Images image) {
-        if (image.getIsPublic()) {
+        if (image.getIspublic()) {
             if (imagesMapper.countImageInGalleries(image.getId()) == 0) {
                 imagesMapper.insertIntoGalleries(image.getId(), image.getUserid(), image.getUrl(), image.getDescription(), image.getTags());
             } else {
@@ -167,5 +166,3 @@ public class ImagesController {
         }
     }
 }
-
-
