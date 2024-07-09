@@ -83,31 +83,17 @@ public class Images {
         this.tags = tags;
     }
 
-    public Images() {
-    }
-
-    public Images(Integer id, Integer userid, String url, String description, Boolean isPublic, LocalDateTime created, LocalDateTime updated, String tags) {
-        this.id = id;
-        this.userid = userid;
-        this.url = url;
-        this.description = description;
-        this.isPublic = isPublic;
-        this.created = created;
-        this.updated = updated;
-        this.tags = tags;
-    }
-
     @Override
     public String toString() {
         return "Images{" +
-                "id=" + id +
-                ", userid=" + userid +
-                ", url='" + url + '\'' +
-                ", description='" + description + '\'' +
-                ", ispublic=" + ispublic +
-                ", created=" + created +
-                ", updated=" + updated +
-                ", tags='" + tags + '\'' +
-                '}';
+              "id=" + id +
+              ", userid=" + userid +
+              ", url='" + url + '\'' +
+              ", description='" + description + '\'' +
+              ", ispublic=" + ispublic +
+              ", created=" + created +
+              ", updated=" + updated +
+              ", tags='" + tags + '\'' +
+              '}';
     }
 }
